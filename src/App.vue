@@ -15,6 +15,27 @@ export default defineComponent({});
   box-sizing: border-box;
 }
 
+.d-flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+.flex-2 {
+  flex: 2;
+}
+.flex-4 {
+  flex: 4;
+}
+.flex-8 {
+  flex: 8;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
