@@ -1,10 +1,18 @@
 <template>
-  <el-menu router :collapse="collapse">
+  <el-menu router :collapse="collapse" :default-openeds="['1']">
+    <el-menu-item index="/">
+      <i class="el-icon-s-grid"></i><span>Dashboard</span>
+    </el-menu-item>
     <el-submenu index="1">
       <template #title>
-        <i class="el-icon-cpu"></i> <span>芯片</span>
+        <i class="el-icon-cpu"></i><span>芯片管理</span>
       </template>
-      <el-menu-item index="/chips/list">RTS3917</el-menu-item>
+      <el-menu-item index="/chips/list">
+        <span>芯片列表</span>
+      </el-menu-item>
+      <el-menu-item index="/chips/create">
+        <span>新建芯片</span>
+      </el-menu-item>
     </el-submenu>
   </el-menu>
 </template>
@@ -22,9 +30,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 .el-menu {
   height: 100vh;
+  border: none;
 
   &:not(.el-menu--collapse) {
     width: 16em;
   }
+}
+.el-menu--collapse span {
+  display: none;
 }
 </style>
