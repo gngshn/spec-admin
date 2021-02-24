@@ -1,5 +1,15 @@
 <template>
   <div class="chip-list">
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :total="pagination.total"
+      :page-size="pagination.limit"
+      :hide-on-single-page="true"
+      :current-page="currentPage"
+      @current-change="pageChange"
+    >
+    </el-pagination>
     <el-table :data="chips">
       <el-table-column label="芯片名称" :min-width="20">
         <template #default="scope">
@@ -39,17 +49,30 @@ export default defineComponent({
     const pagination: Ref<Pagination<Chip>> = ref({
       total: 0,
       skip: 0,
-      limit: 0,
+      limit: 10,
       data: [],
     });
+
+    const pageChange = async (page: number) => {
+      await fetchChips(pageToSkip(page));
+    };
 
     const chips = computed(() => {
       return pagination.value.data;
     });
 
-    const fetchChips = async () => {
-      const res = await axios.get("/chips");
+    const pageToSkip = (page: number): number => {
+      return (page - 1) * pagination.value.limit;
+    };
+
+    const currentPage = computed(() => {
+      return pagination.value.skip / pagination.value.limit + 1;
+    });
+
+    const fetchChips = async (skip: number = 0) => {
+      const res = await axios.get(`/chips?skip=${skip}&limit=10`);
       pagination.value = res.data;
+      console.log(pagination.value);
     };
 
     const deleteConfirm = async () => {
@@ -74,7 +97,7 @@ export default defineComponent({
     const handleDelete = async (chip: Chip) => {
       await deleteConfirm();
       await axios.delete(`/chips/${chip.id}`);
-      await fetchChips();
+      await fetchChips(pageToSkip(currentPage.value));
     };
 
     return {
@@ -82,6 +105,8 @@ export default defineComponent({
       chips,
       handleEdit,
       handleDelete,
+      pageChange,
+      currentPage,
     };
   },
 });
