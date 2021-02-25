@@ -70,9 +70,9 @@ export default defineComponent({
     });
 
     const fetchChips = async (skip: number = 0) => {
-      const res = await axios.get(`/chips?skip=${skip}&limit=10`);
+      const res = await axios.get(`/generic/chips?skip=${skip}&limit=10`);
       pagination.value = res.data;
-      console.log(pagination.value);
+      pagination.value.data.sort((a, b) => a.name.localeCompare(b.name));
     };
 
     const deleteConfirm = async () => {
@@ -96,7 +96,7 @@ export default defineComponent({
     };
     const handleDelete = async (chip: Chip) => {
       await deleteConfirm();
-      await axios.delete(`/chips/${chip.id}`);
+      await axios.delete(`/generic/chips/${chip.id}`);
       await fetchChips(pageToSkip(currentPage.value));
     };
 

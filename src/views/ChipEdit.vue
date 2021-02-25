@@ -46,9 +46,9 @@ export default defineComponent({
     const save = async () => {
       let res;
       if (props.id) {
-        res = await axios.put(`/chips/${props.id}`, chip.value);
+        res = await axios.put(`/generic/chips/${props.id}`, chip.value);
       } else {
-        res = await axios.post("/chips", chip.value);
+        res = await axios.post("/generic/chips", chip.value);
       }
       if (res.status === 200 || res.status === 201) {
         router.push("/chips/list");
@@ -56,7 +56,7 @@ export default defineComponent({
     };
     const getChip = async () => {
       if (props.id) {
-        const res = await axios.get(`/chips/${props.id}`);
+        const res = await axios.get(`/generic/chips/${props.id}`);
         chip.value = res.data;
       }
     };
