@@ -6,6 +6,7 @@
       :rules="chipRules"
       label-position="right"
       label-width="6em"
+      ref="formRef"
     >
       <el-form-item label="芯片名称" prop="name">
         <el-input v-model="chip.name"></el-input>
@@ -23,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, Ref, ref } from "vue";
+import { defineComponent, onMounted, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Chip } from "../model/chip";
 import axios from "../utils/axios";
@@ -43,7 +44,15 @@ export default defineComponent({
       name: [{ required: true, message: "请输入名称", trigger: "blur" }],
       description: [{ required: true, message: "请输入描述", trigger: "blur" }],
     });
+    const formRef = ref<HTMLFormElement>();
     const save = async () => {
+      if (formRef.value) {
+        try {
+          await formRef.value.validate();
+        } catch (e) {
+          return;
+        }
+      }
       let res;
       if (props.id) {
         res = await axios.put(`/generic/chips/${props.id}`, chip.value);
@@ -66,6 +75,7 @@ export default defineComponent({
       chipRules,
       save,
       getChip,
+      formRef,
     };
   },
 });

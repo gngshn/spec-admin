@@ -2,7 +2,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
 import ChipList from '../views/ChipList.vue'
 import ChipEdit from '../views/ChipEdit.vue'
-import Test from '../views/Test.vue'
+import ModList from '../views/ModList.vue'
+import ModEdit from '../views/ModEdit.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,12 +23,21 @@ const routes: Array<RouteRecordRaw> = [
         component: ChipEdit,
         props: true,
       },
+      {
+        path: 'mods/list',
+        component: ModList,
+      },
+      {
+        path: '/mods/create',
+        component: ModEdit,
+      },
+      {
+        path: '/mods/edit/:id',
+        component: ModEdit,
+        props: true,
+      },
     ]
   },
-  {
-    path: '/test',
-    component: Test
-  }
 ]
 
 export default createRouter({

@@ -1,5 +1,5 @@
 <template>
-  <div class="chip-list">
+  <div class="mod-list">
     <el-pagination
       background
       layout="prev, pager, next"
@@ -10,13 +10,18 @@
       @current-change="pageChange"
     >
     </el-pagination>
-    <el-table :data="chips">
-      <el-table-column label="芯片名称" :min-width="20">
+    <el-table :data="mods">
+      <el-table-column label="模块名称" :min-width="10">
         <template #default="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="芯片描述" :min-width="60">
+      <el-table-column label="地址偏移" :min-width="10">
+        <template #default="scope">
+          <span>{{ scope.row.regOffset }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="模块描述" :min-width="60">
         <template #default="scope">
           <span>{{ scope.row.description }}</span>
         </template>
@@ -39,14 +44,14 @@
 import { ElMessageBox } from "element-plus";
 import { computed, defineComponent, onMounted, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
-import { Chip } from "../model/chip";
+import { Mod } from "../model/mod";
 import { Pagination } from "../model/pagination";
 import axios from "../utils/axios";
 
 export default defineComponent({
   setup() {
     const router = useRouter();
-    const pagination: Ref<Pagination<Chip>> = ref({
+    const pagination: Ref<Pagination<Mod>> = ref({
       total: 0,
       skip: 0,
       limit: 10,
@@ -54,10 +59,10 @@ export default defineComponent({
     });
 
     const pageChange = async (page: number) => {
-      await fetchChips(pageToSkip(page));
+      await fetchMods(pageToSkip(page));
     };
 
-    const chips = computed(() => {
+    const mods = computed(() => {
       return pagination.value.data;
     });
 
@@ -69,8 +74,8 @@ export default defineComponent({
       return pagination.value.skip / pagination.value.limit + 1;
     });
 
-    const fetchChips = async (skip: number = 0) => {
-      const res = await axios.get(`/generic/chips?skip=${skip}&limit=10`);
+    const fetchMods = async (skip: number = 0) => {
+      const res = await axios.get(`/generic/mods?skip=${skip}&limit=10`);
       pagination.value = res.data;
       pagination.value.data.sort((a, b) => a.name.localeCompare(b.name));
     };
@@ -89,20 +94,20 @@ export default defineComponent({
       } catch (e) {}
     };
 
-    onMounted(fetchChips);
+    onMounted(fetchMods);
 
-    const handleEdit = (chip: Chip) => {
-      router.push({ path: `/chips/edit/${chip.id}` });
+    const handleEdit = (mod: Mod) => {
+      router.push({ path: `/mods/edit/${mod.id}` });
     };
-    const handleDelete = async (chip: Chip) => {
+    const handleDelete = async (mod: Mod) => {
       await deleteConfirm();
-      await axios.delete(`/generic/chips/${chip.id}`);
-      await fetchChips(pageToSkip(currentPage.value));
+      await axios.delete(`/generic/mods/${mod.id}`);
+      await fetchMods(pageToSkip(currentPage.value));
     };
 
     return {
       pagination,
-      chips,
+      mods,
       handleEdit,
       handleDelete,
       pageChange,
@@ -113,7 +118,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.chip-list {
+.mod-list {
   margin: 1em;
   .el-table {
     .name-row {
