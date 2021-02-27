@@ -98,26 +98,21 @@ export default defineComponent({
 
     const fetchMods = async (skip: number = 0) => {
       let chipParam = "";
-      let modParam = "";
       let parentParam = "";
       if (chipFilter.value !== "" && chipFilter.value !== null) {
         chipParam = `&chip=${chipFilter.value}`;
       }
       if (modFilter.value !== "" && modFilter.value !== null) {
-        modParam = `&id=${modFilter.value}`;
         parentParam = `&parent=${modFilter.value}`;
       }
-      const resMod = await axios.get(
-        `/generic/mods?skip=${skip}&limit=${pagination.value.limit}${chipParam}${modParam}`
+      const resChildren = await axios.get(
+        `/generic/mods?skip=${skip}&limit=${pagination.value.limit}${chipParam}${parentParam}`
       );
-      pagination.value = resMod.data;
-      if (parentParam !== "") {
-        const resChildren = await axios.get(
-          `/generic/mods?skip=${skip}&limit=${pagination.value.limit}${chipParam}${parentParam}`
-        );
-        pagination.value.data.push(...resChildren.data.data);
+      pagination.value = resChildren.data;
+      if (modFilter.value !== "" && modFilter.value !== null) {
+        let modRes = await axios.get(`/generic/mods/${modFilter.value}`);
+        pagination.value.data.unshift(modRes.data);
       }
-      console.log(pagination.value.data);
     };
 
     const deleteConfirm = async () => {

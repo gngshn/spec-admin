@@ -1,4 +1,4 @@
-import { App, Plugin } from 'vue'
+import { App } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
 
