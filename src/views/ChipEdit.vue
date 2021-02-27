@@ -1,25 +1,27 @@
 <template>
   <div class="chip-edit">
     <h1>{{ id ? "编辑" : "新建" }}芯片</h1>
-    <el-form
-      :model="chip"
-      :rules="chipRules"
-      label-position="right"
-      label-width="6em"
-      ref="formRef"
-    >
-      <el-form-item label="芯片名称" prop="name">
-        <el-input v-model="chip.name"></el-input>
-      </el-form-item>
-      <el-form-item label="芯片描述" prop="description">
-        <el-input
-          type="textarea"
-          autosize
-          v-model="chip.description"
-        ></el-input>
-      </el-form-item>
-    </el-form>
-    <el-button type="primary" @click="save">保存</el-button>
+    <el-card>
+      <el-form
+        :model="chip"
+        :rules="chipRules"
+        label-position="right"
+        label-width="6em"
+        ref="formRef"
+      >
+        <el-form-item label="芯片名称" prop="name">
+          <el-input v-model="chip.name"></el-input>
+        </el-form-item>
+        <el-form-item label="芯片描述" prop="description">
+          <el-input
+            type="textarea"
+            autosize
+            v-model="chip.description"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" @click="save">保存</el-button>
+    </el-card>
   </div>
 </template>
 

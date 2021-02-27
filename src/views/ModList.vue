@@ -1,54 +1,67 @@
 <template>
   <div class="mod-list">
-    <el-pagination
-      background
-      layout="prev, pager, next"
-      :total="pagination.total"
-      :page-size="pagination.limit"
-      :hide-on-single-page="true"
-      :current-page="currentPage"
-      @current-change="pageChange"
-    >
-    </el-pagination>
-    <el-table :data="mods">
-      <el-table-column label="模块名称" :min-width="10">
-        <template #default="scope">
-          <span>{{ scope.row.name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="地址偏移" :min-width="10">
-        <template #default="scope">
-          <span>{{ scope.row.regOffset }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="模块描述" :min-width="60">
-        <template #default="scope">
-          <span>{{ scope.row.description }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" :min-width="20">
-        <template #default="scope">
-          <el-button size="mini" @click="handleEdit(scope.row)">
-            编辑
-          </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <h1>模块列表</h1>
+    <el-card>
+      <mod-select
+        v-model:chip="chipFilter"
+        v-model:mod="modFilter"
+      ></mod-select>
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="pagination.total"
+        :page-size="pagination.limit"
+        :hide-on-single-page="true"
+        :current-page="currentPage"
+        @current-change="pageChange"
+      >
+      </el-pagination>
+      <el-table :data="mods">
+        <el-table-column label="模块名称" :min-width="10">
+          <template #default="scope">
+            <span>{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="地址偏移" :min-width="10">
+          <template #default="scope">
+            <span>{{ scope.row.regOffset }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="模块描述" :min-width="60">
+          <template #default="scope">
+            <span>{{ scope.row.description }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" :min-width="20">
+          <template #default="scope">
+            <el-button size="mini" @click="handleEdit(scope.row)">
+              编辑
+            </el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
   </div>
 </template>
 
 <script lang="ts">
 import { ElMessageBox } from "element-plus";
-import { computed, defineComponent, onMounted, Ref, ref } from "vue";
+import { computed, defineComponent, onMounted, Ref, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Mod } from "../model/mod";
 import { Pagination } from "../model/pagination";
 import axios from "../utils/axios";
+import ModSelect from "../components/ModSelect.vue";
 
 export default defineComponent({
+  components: { ModSelect },
   setup() {
     const router = useRouter();
     const pagination: Ref<Pagination<Mod>> = ref({
@@ -56,6 +69,15 @@ export default defineComponent({
       skip: 0,
       limit: 10,
       data: [],
+    });
+    const chipFilter = ref("");
+    const modFilter = ref("");
+
+    watch(chipFilter, async () => {
+      fetchMods();
+    });
+    watch(modFilter, async () => {
+      fetchMods();
     });
 
     const pageChange = async (page: number) => {
@@ -75,9 +97,27 @@ export default defineComponent({
     });
 
     const fetchMods = async (skip: number = 0) => {
-      const res = await axios.get(`/generic/mods?skip=${skip}&limit=10`);
-      pagination.value = res.data;
-      pagination.value.data.sort((a, b) => a.name.localeCompare(b.name));
+      let chipParam = "";
+      let modParam = "";
+      let parentParam = "";
+      if (chipFilter.value !== "" && chipFilter.value !== null) {
+        chipParam = `&chip=${chipFilter.value}`;
+      }
+      if (modFilter.value !== "" && modFilter.value !== null) {
+        modParam = `&id=${modFilter.value}`;
+        parentParam = `&parent=${modFilter.value}`;
+      }
+      const resMod = await axios.get(
+        `/generic/mods?skip=${skip}&limit=${pagination.value.limit}${chipParam}${modParam}`
+      );
+      pagination.value = resMod.data;
+      if (parentParam !== "") {
+        const resChildren = await axios.get(
+          `/generic/mods?skip=${skip}&limit=${pagination.value.limit}${chipParam}${parentParam}`
+        );
+        pagination.value.data.push(...resChildren.data.data);
+      }
+      console.log(pagination.value.data);
     };
 
     const deleteConfirm = async () => {
@@ -108,6 +148,8 @@ export default defineComponent({
     return {
       pagination,
       mods,
+      chipFilter,
+      modFilter,
       handleEdit,
       handleDelete,
       pageChange,
@@ -120,7 +162,12 @@ export default defineComponent({
 <style lang="scss" scoped>
 .mod-list {
   margin: 1em;
+  h1 {
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+  }
   .el-table {
+    margin-top: 2em;
     .name-row {
       width: 8em;
     }
