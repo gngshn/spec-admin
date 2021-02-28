@@ -20,7 +20,7 @@
             <el-input v-model="mod.name"></el-input>
           </el-form-item>
           <el-form-item label="地址偏移" prop="regOffset">
-            <el-input v-model="mod.regOffset"></el-input>
+            <hex-input v-model="mod.regOffset" :minLength="4"></hex-input>
           </el-form-item>
         </div>
         <el-form-item label="模块描述" prop="description">
@@ -39,6 +39,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, Ref, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import HexInput from "../components/HexInput.vue";
 import ModSelect from "../components/ModSelect.vue";
 import { Mod } from "../model/mod";
 import axios from "../utils/axios";
@@ -46,6 +47,7 @@ import axios from "../utils/axios";
 export default defineComponent({
   components: {
     ModSelect,
+    HexInput,
   },
   props: {
     id: String,
@@ -57,7 +59,7 @@ export default defineComponent({
       description: "",
       chip: "",
       parent: "",
-      regOffset: "",
+      regOffset: 0,
     };
     const router = useRouter();
     const mod: Ref<Mod> = ref(Object.assign({}, zeroMod));

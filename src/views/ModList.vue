@@ -24,7 +24,7 @@
         </el-table-column>
         <el-table-column label="地址偏移" :min-width="10">
           <template #default="scope">
-            <span>{{ scope.row.regOffset }}</span>
+            <span>{{ makeString(scope.row.regOffset, 8) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="模块描述" :min-width="60">
@@ -59,6 +59,7 @@ import { Mod } from "../model/mod";
 import { Pagination } from "../model/pagination";
 import axios from "../utils/axios";
 import ModSelect from "../components/ModSelect.vue";
+import { makeString } from "../utils";
 
 export default defineComponent({
   components: { ModSelect },
@@ -74,7 +75,11 @@ export default defineComponent({
     const modFilter = ref("");
 
     watch(chipFilter, async () => {
-      fetchMods();
+      if (modFilter.value === "") {
+        fetchMods();
+      } else {
+        modFilter.value = "";
+      }
     });
     watch(modFilter, async () => {
       fetchMods();
@@ -149,6 +154,7 @@ export default defineComponent({
       handleDelete,
       pageChange,
       currentPage,
+      makeString,
     };
   },
 });

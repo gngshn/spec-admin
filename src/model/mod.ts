@@ -4,5 +4,5 @@ export interface Mod {
   description: string;
   chip: string;
   parent: string;
-  regOffset: string;
+  regOffset: number;
 }
