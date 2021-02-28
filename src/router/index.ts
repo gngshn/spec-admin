@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
         props: true,
       },
       {
-        path: 'mods/list',
+        path: '/mods/list',
         component: () => import('../views/ModList.vue'),
       },
       {
@@ -30,6 +30,15 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/mods/edit/:id',
         component: () => import('../views/ModEdit.vue'),
+        props: true,
+      },
+      {
+        path: '/registers',
+        component: () => import('../views/RegManager.vue'),
+      },
+      {
+        path: '/registers/:modID',
+        component: () => import('../views/RegManager.vue'),
         props: true,
       },
     ]

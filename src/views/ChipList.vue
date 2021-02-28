@@ -48,6 +48,7 @@ import { computed, defineComponent, onMounted, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Chip } from "../model/chip";
 import { Pagination } from "../model/pagination";
+import { deleteConfirm } from "../utils";
 import axios from "../utils/axios";
 
 export default defineComponent({
@@ -82,27 +83,17 @@ export default defineComponent({
       pagination.value.data.sort((a, b) => a.name.localeCompare(b.name));
     };
 
-    const deleteConfirm = async () => {
-      try {
-        await ElMessageBox.confirm(
-          "此操作将永久删除该文件, 是否继续?",
-          "提示",
-          {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-          }
-        );
-      } catch (e) {}
-    };
-
     onMounted(fetchChips);
 
     const handleEdit = (chip: Chip) => {
       router.push({ path: `/chips/edit/${chip.id}` });
     };
     const handleDelete = async (chip: Chip) => {
-      await deleteConfirm();
+      try {
+        await deleteConfirm();
+      } catch {
+        return;
+      }
       await axios.delete(`/generic/chips/${chip.id}`);
       await fetchChips(pageToSkip(currentPage.value));
     };

@@ -78,7 +78,7 @@ export default defineComponent({
       if (formRef.value) {
         try {
           await formRef.value.validate();
-        } catch (e) {
+        } catch {
           return;
         }
       }

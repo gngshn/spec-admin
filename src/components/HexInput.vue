@@ -5,25 +5,39 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
-import { makeString } from "../utils";
+import { computed, defineComponent, ref, watch } from "vue";
+import { makeHex } from "../utils";
 
 export default defineComponent({
   props: {
-    modelValue: { type: Number, required: true },
+    modelValue: { required: true },
     minLength: { type: Number, default: 0 },
+    stringMode: { type: Boolean, default: false },
   },
   setup(props, context) {
-    let numString = ref("");
-    watch(
-      () => props.modelValue,
-      (newVal) => (numString.value = makeString(newVal, props.minLength))
-    );
+    const getString = (value: string | number) => {
+      if (props.stringMode) {
+        return makeHex(parseInt(value as string), props.minLength);
+      } else {
+        return makeHex(value as number, props.minLength);
+      }
+    };
+    let numString = ref(getString(props.modelValue as string | number));
+    const intputValue = computed(() => {
+      if (props.stringMode) {
+        return numString.value;
+      } else {
+        return parseInt(numString.value);
+      }
+    });
+    watch(props, () => {
+      numString.value = getString(props.modelValue as string | number);
+    });
     let inputBlur = () => {
-      let num = parseInt(numString.value);
-      num = isNaN(num) ? 0 : num;
-      numString.value = makeString(num, props.minLength);
-      context.emit("update:modelValue", num);
+      numString.value = getString(
+        props.stringMode ? numString.value : parseInt(numString.value)
+      );
+      context.emit("update:modelValue", intputValue.value);
     };
     return {
       numString,

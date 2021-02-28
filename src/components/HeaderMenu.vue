@@ -1,11 +1,13 @@
 <template>
-  <div class="header-menu d-flex">
-    <el-button
-      type="text"
-      :icon="foldIconType"
-      @click="foldIconClick()"
-    ></el-button>
-  </div>
+  <el-affix>
+    <div class="header-menu d-flex">
+      <el-button
+        type="text"
+        :icon="foldIconType"
+        @click="foldIconClick()"
+      ></el-button>
+    </div>
+  </el-affix>
 </template>
 
 <script lang='ts'>
@@ -31,6 +33,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .header-menu {
+  background: #ccc;
   height: 3em;
   border-bottom: 1px solid #eee;
   margin-bottom: 2px;

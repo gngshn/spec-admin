@@ -8,6 +8,8 @@
             :key="item.id"
             :label="item.name"
             :value="item.id"
+            filterable
+            clearable
           >
           </el-option>
         </el-select>
@@ -133,6 +135,7 @@ export default defineComponent({
       return tree;
     });
     const chipChange = async (newChip: string) => {
+      context.emit("update:mod", "");
       context.emit("update:chip", newChip);
     };
     const modChange = (newMod: string) => {
@@ -157,7 +160,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .mod-select > div > div > span {
   margin: 0.5em;
 }

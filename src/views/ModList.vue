@@ -24,7 +24,7 @@
         </el-table-column>
         <el-table-column label="地址偏移" :min-width="10">
           <template #default="scope">
-            <span>{{ makeString(scope.row.regOffset, 8) }}</span>
+            <span>{{ makeHex(scope.row.regOffset, 8) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="模块描述" :min-width="60">
@@ -59,7 +59,7 @@ import { Mod } from "../model/mod";
 import { Pagination } from "../model/pagination";
 import axios from "../utils/axios";
 import ModSelect from "../components/ModSelect.vue";
-import { makeString } from "../utils";
+import { deleteConfirm, makeHex } from "../utils";
 
 export default defineComponent({
   components: { ModSelect },
@@ -75,11 +75,7 @@ export default defineComponent({
     const modFilter = ref("");
 
     watch(chipFilter, async () => {
-      if (modFilter.value === "") {
-        fetchMods();
-      } else {
-        modFilter.value = "";
-      }
+      fetchMods();
     });
     watch(modFilter, async () => {
       fetchMods();
@@ -120,27 +116,17 @@ export default defineComponent({
       }
     };
 
-    const deleteConfirm = async () => {
-      try {
-        await ElMessageBox.confirm(
-          "此操作将永久删除该文件, 是否继续?",
-          "提示",
-          {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-          }
-        );
-      } catch (e) {}
-    };
-
     onMounted(fetchMods);
 
     const handleEdit = (mod: Mod) => {
       router.push({ path: `/mods/edit/${mod.id}` });
     };
     const handleDelete = async (mod: Mod) => {
-      await deleteConfirm();
+      try {
+        await deleteConfirm();
+      } catch {
+        return;
+      }
       await axios.delete(`/generic/mods/${mod.id}`);
       await fetchMods(pageToSkip(currentPage.value));
     };
@@ -154,7 +140,7 @@ export default defineComponent({
       handleDelete,
       pageChange,
       currentPage,
-      makeString,
+      makeHex,
     };
   },
 });
