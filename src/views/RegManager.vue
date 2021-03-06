@@ -55,8 +55,7 @@ export default defineComponent({
       id: "",
       name: "",
       description: "",
-      offset: 0,
-      fields: [{ reset: "" }],
+      fields: [{}],
       parent: mod.value,
     } as Register;
     const newReg: Ref<Register> = ref(JSON.parse(JSON.stringify(newRegVal)));

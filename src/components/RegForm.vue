@@ -55,11 +55,7 @@
         </el-table-column>
         <el-table-column label="reset" min-width="12">
           <template #default="scope">
-            <hex-input
-              v-if="scope.row.reset !== undefined"
-              v-model="scope.row.reset"
-              :stringMode="true"
-            ></hex-input>
+            <hex-input v-model="scope.row.reset" :stringMode="true"></hex-input>
           </template>
         </el-table-column>
         <el-table-column min-width="5">

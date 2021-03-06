@@ -1,5 +1,42 @@
-import { App } from 'vue'
-import ElementPlus from 'element-plus'
-import 'element-plus/lib/theme-chalk/index.css'
+import { App, Component } from 'vue'
+import {
+  ElAffix,
+  ElButton,
+  ElInput,
+  ElForm,
+  ElFormItem,
+  ElSelect,
+  ElOption,
+  ElCascader,
+  ElCard,
+  ElIcon,
+  ElTable,
+  ElTableColumn,
+  ElMenu,
+  ElMenuItem,
+  ElSubmenu,
+  ElPagination,
+} from 'element-plus'
 
-export default (app: App<Element>) => app.use(ElementPlus)
+const components: Array<Component> = [
+  ElAffix,
+  ElButton,
+  ElInput,
+  ElForm,
+  ElFormItem,
+  ElSelect,
+  ElOption,
+  ElCascader,
+  ElCard,
+  ElIcon,
+  ElTable,
+  ElTableColumn,
+  ElMenu,
+  ElMenuItem,
+  ElSubmenu,
+  ElPagination,
+]
+
+export default (app: App<Element>) => {
+  components.forEach(c => { app.component(c.name as string, c) })
+}

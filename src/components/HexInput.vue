@@ -10,19 +10,22 @@ import { makeHex } from "../utils";
 
 export default defineComponent({
   props: {
-    modelValue: { required: true },
+    modelValue: {},
     minLength: { type: Number, default: 0 },
     stringMode: { type: Boolean, default: false },
   },
   setup(props, context) {
-    const getString = (value: string | number) => {
+    const getString = (value: string | number | undefined) => {
+      if (value === undefined) {
+        return "";
+      }
       if (props.stringMode) {
         return makeHex(parseInt(value as string), props.minLength);
       } else {
         return makeHex(value as number, props.minLength);
       }
     };
-    let numString = ref(getString(props.modelValue as string | number));
+    let numString = ref(getString(props.modelValue as any));
     const intputValue = computed(() => {
       if (props.stringMode) {
         return numString.value;
@@ -31,7 +34,7 @@ export default defineComponent({
       }
     });
     watch(props, () => {
-      numString.value = getString(props.modelValue as string | number);
+      numString.value = getString(props.modelValue as any);
     });
     let inputBlur = () => {
       numString.value = getString(
