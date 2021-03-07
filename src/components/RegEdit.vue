@@ -33,6 +33,7 @@
             提交
           </el-button>
           <el-button
+            v-if="!isNew"
             type="warning"
             icon="el-icon-refresh"
             @click="isShowing = true"
@@ -62,7 +63,7 @@
 
 <script lang="ts">
 import { PropType, ref } from "vue";
-import { RegField, Register } from "../model/register";
+import { Register } from "../model/register";
 import RegShow from "./RegShow.vue";
 import RegForm from "./RegForm.vue";
 import axios from "../utils/axios";
@@ -82,6 +83,7 @@ export default {
         await formRef.validate();
         if (props.isNew) {
           reg.id = "";
+          reg.parent = props.modelValue.parent;
           await axios.post("/generic/registers", reg);
           context.emit("reg-change");
         } else {
@@ -107,7 +109,13 @@ export default {
       }
     };
     const handleAddRow = async (reg: Register) => {
-      reg.fields.push({} as RegField);
+      reg.fields.push({
+        bits: [NaN, NaN],
+        name: "",
+        description: "",
+        access: "",
+        reset: "",
+      });
     };
 
     return {

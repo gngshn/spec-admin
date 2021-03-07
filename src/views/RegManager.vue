@@ -13,16 +13,25 @@
       @reg-change="handleRegChange"
     ></reg-edit>
     <reg-edit
-      v-if="mod !== null && mod !== ''"
-      v-model="newReg"
+      :modelValue="newReg"
       :isNew="true"
+      v-if="mod !== null && mod !== ''"
+      :key="newKeyCount"
       @reg-change="handleRegChange"
     ></reg-edit>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, Ref, ref, watch } from "vue";
+import {
+  computed,
+  ComputedRef,
+  defineComponent,
+  onMounted,
+  Ref,
+  ref,
+  watch,
+} from "vue";
 import axios from "../utils/axios";
 import ModSelect from "../components/ModSelect.vue";
 import RegEdit from "../components/RegEdit.vue";
@@ -36,6 +45,7 @@ export default defineComponent({
   },
   setup(props) {
     const currentComponent = ref("reg-show");
+    const newKeyCount = ref(0);
     const pagination: Ref<Pagination<Register>> = ref({
       limit: 10,
     } as Pagination<Register>);
@@ -51,28 +61,33 @@ export default defineComponent({
       );
       pagination.value = res.data;
     };
-    const newRegVal = {
-      id: "",
-      name: "",
-      description: "",
-      fields: [{}],
-      parent: mod.value,
-    } as Register;
-    const newReg: Ref<Register> = ref(JSON.parse(JSON.stringify(newRegVal)));
-    newReg.value.parent = mod.value;
-    watch(
-      () => mod.value,
-      (newVal) => (newReg.value.parent = newVal)
-    );
+    const newReg: ComputedRef<Register> = computed(() => {
+      return {
+        id: "",
+        name: "",
+        description: "",
+        offset: NaN,
+        fields: [
+          {
+            bits: [NaN, NaN],
+            name: "",
+            description: "",
+            access: "",
+            reset: "",
+          },
+        ],
+        parent: mod.value,
+      };
+    });
     const handleRegChange = async () => {
       await fetchRegisters();
-      newReg.value = JSON.parse(JSON.stringify(newRegVal));
-      newReg.value.parent = mod.value;
+      newKeyCount.value += 1;
     };
     onMounted(fetchRegisters);
     watch(mod, fetchRegisters);
     return {
       currentComponent,
+      newKeyCount,
       pagination,
       chip,
       mod,

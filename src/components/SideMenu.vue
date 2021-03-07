@@ -1,6 +1,11 @@
 <template>
   <el-affix>
-    <el-menu router :collapse="collapse" v-bind="$attrs">
+    <el-menu
+      router
+      :collapse="collapse"
+      v-bind="$attrs"
+      :default-active="$route.path"
+    >
       <el-menu-item index="/">
         <i class="el-icon-s-grid"></i><span>Dashboard</span>
       </el-menu-item>

@@ -8,6 +8,7 @@
         label-position="right"
         label-width="6em"
         ref="formRef"
+        @submit.prevent="save"
       >
         <mod-select
           :isForm="true"
@@ -30,8 +31,8 @@
             v-model="mod.description"
           ></el-input>
         </el-form-item>
+        <el-button type="primary" native-type="submit">保存</el-button>
       </el-form>
-      <el-button type="primary" @click="save">保存</el-button>
     </el-card>
   </div>
 </template>
@@ -43,6 +44,14 @@ import HexInput from "../components/HexInput.vue";
 import ModSelect from "../components/ModSelect.vue";
 import { Mod } from "../model/mod";
 import axios from "../utils/axios";
+
+function regOffsetValidator(_: any, value: number, callback: any) {
+  if (isNaN(value) || value < 0 || value > 0xffffffff) {
+    callback("请输入合理的 32bit 数字");
+  } else {
+    callback();
+  }
+}
 
 export default defineComponent({
   components: {
@@ -59,7 +68,7 @@ export default defineComponent({
       description: "",
       chip: "",
       parent: "",
-      regOffset: 0,
+      regOffset: NaN,
     };
     const router = useRouter();
     const mod: Ref<Mod> = ref(Object.assign({}, zeroMod));
@@ -67,29 +76,26 @@ export default defineComponent({
       name: [{ required: true, message: "请输入名称", trigger: "blur" }],
       description: [{ required: true, message: "请输入描述", trigger: "blur" }],
       chip: [{ required: true, message: "请选择芯片", trigger: "change" }],
-      regOffset: [
-        { required: true, message: "请输入寄存器地址偏移", trigger: "blur" },
-      ],
+      regOffset: [{ validator: regOffsetValidator, trigger: "blur" }],
     });
 
     const formRef = ref<HTMLFormElement>();
 
     const save = async () => {
-      if (formRef.value) {
-        try {
-          await formRef.value.validate();
-        } catch {
-          return;
+      try {
+        console.log("save");
+        await formRef.value?.validate();
+        let res;
+        if (props.id) {
+          res = await axios.put(`/generic/mods/${props.id}`, mod.value);
+        } else {
+          res = await axios.post("/generic/mods", mod.value);
         }
-      }
-      let res;
-      if (props.id) {
-        res = await axios.put(`/generic/mods/${props.id}`, mod.value);
-      } else {
-        res = await axios.post("/generic/mods", mod.value);
-      }
-      if (res.status === 200 || res.status === 201) {
-        router.push("/mods/list");
+        if (res.status === 200 || res.status === 201) {
+          router.push("/mods/list");
+        }
+      } catch {
+        return;
       }
     };
     const fetchData = async () => {

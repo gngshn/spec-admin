@@ -17,45 +17,82 @@
       <el-table :data="reg.fields.slice().reverse()">
         <el-table-column label="bits" min-width="8">
           <template #default="scope">
-            <div class="d-flex bits-input">
-              <el-input
-                type="number"
-                min="0"
-                max="31"
-                v-model.number="scope.row.msb"
-              ></el-input>
-              <span>:</span>
-              <el-input
-                type="number"
-                min="0"
-                max="31"
-                v-model.number="scope.row.lsb"
-              ></el-input>
-            </div>
+            <el-form-item
+              label=""
+              label-width="0px"
+              :prop="'fields.' + scope.$index + '.bits'"
+              :rules="{ validator: validateFieldBits, trigger: 'blur' }"
+            >
+              <div class="d-flex bits-input">
+                <el-input
+                  type="number"
+                  min="0"
+                  max="31"
+                  v-model.number="scope.row.bits[1]"
+                ></el-input>
+                <span>:</span>
+                <el-input
+                  type="number"
+                  min="0"
+                  max="31"
+                  v-model.number="scope.row.bits[0]"
+                ></el-input>
+              </div>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="name" min-width="15">
           <template #default="scope">
-            <el-input v-model="scope.row.name"></el-input>
+            <el-form-item
+              label=""
+              label-width="0px"
+              :prop="'fields.' + scope.$index + '.name'"
+              :rules="{ validator: validateFieldName, trigger: 'blur' }"
+            >
+              <el-input v-model="scope.row.name"></el-input>
+            </el-form-item>
           </template>
         </el-table-column>
-        <el-table-column prop="description" label="description" min-width="55">
+        <el-table-column prop="description" label="description" min-width="40">
           <template #default="scope">
-            <el-input
-              type="textarea"
-              autosize
-              v-model="scope.row.description"
-            ></el-input>
+            <el-form-item
+              label=""
+              label-width="0px"
+              :prop="'fields.' + scope.$index + '.description'"
+              :rules="{
+                required: true,
+                message: '请输入描述',
+                trigger: 'blur',
+              }"
+            >
+              <el-input
+                type="textarea"
+                autosize
+                v-model="scope.row.description"
+              ></el-input>
+            </el-form-item>
           </template>
         </el-table-column>
-        <el-table-column prop="access" label="access" min-width="8">
+        <el-table-column prop="access" label="access" min-width="12">
           <template #default="scope">
-            <el-input v-model="scope.row.access"></el-input>
+            <el-form-item
+              label=""
+              label-width="0px"
+              :prop="'fields.' + scope.$index + '.access'"
+              :rules="{ validator: validateFieldAccess, trigger: 'blur' }"
+            >
+              <el-input v-model="scope.row.access"></el-input>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column label="reset" min-width="12">
           <template #default="scope">
-            <hex-input v-model="scope.row.reset" :stringMode="true"></hex-input>
+            <el-form-item label="" label-width="0px">
+              <hex-input
+                v-model="scope.row.reset"
+                :stringMode="true"
+              ></hex-input>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column min-width="5">
@@ -81,6 +118,7 @@ import { defineComponent, PropType, Ref, ref, watch } from "vue";
 import { Register } from "../model/register";
 import HexInput from "./HexInput.vue";
 import { makeHex } from "../utils";
+import { cloneDeep } from "lodash";
 
 function validateName(
   _: any,
@@ -120,13 +158,55 @@ function validateOffset(
   }
 }
 
+function validateFieldBits(
+  _: any,
+  value: number[],
+  callback: (s: string | void) => void
+) {
+  if (
+    !Number.isInteger(value[0]) ||
+    !Number.isInteger(value[1]) ||
+    (value[0] < 0 && value[1] > 31 && value[0] > value[1])
+  ) {
+    return callback("bits定义有误");
+  } else {
+    return callback();
+  }
+}
+
+function validateFieldName(
+  _: any,
+  value: string,
+  callback: (s: string | void) => void
+) {
+  let nameRegExp = /^\w+(\[\d+\])?$/;
+  if (nameRegExp.test(value)) {
+    return callback();
+  } else {
+    return callback("请输入正确的信号名");
+  }
+}
+
+function validateFieldAccess(
+  _: any,
+  value: string,
+  callback: (s: string | void) => void
+) {
+  let nameRegExp = /^RO|WO|RW|W1C$/;
+  if (nameRegExp.test(value)) {
+    return callback();
+  } else {
+    return callback("RO/WO/RW/W1C");
+  }
+}
+
 export default defineComponent({
   components: { HexInput },
   props: {
     register: { type: Object as PropType<Register>, required: true },
   },
   setup(props) {
-    const reg: Ref<Register> = ref(JSON.parse(JSON.stringify(props.register)));
+    const reg: Ref<Register> = ref(cloneDeep(props.register));
     const regRules = {
       name: [{ validator: validateName, trigger: "blur" }],
       description: [{ validator: validateDescription, trigger: "blur" }],
@@ -139,7 +219,7 @@ export default defineComponent({
     watch(
       () => props.register,
       (newVal: Register) => {
-        reg.value = JSON.parse(JSON.stringify(newVal));
+        reg.value = cloneDeep(props.register);
       }
     );
     return {
@@ -148,6 +228,9 @@ export default defineComponent({
       makeHex,
       handleDeleteRow,
       formRef,
+      validateFieldBits,
+      validateFieldName,
+      validateFieldAccess,
     };
   },
 });
@@ -159,6 +242,16 @@ export default defineComponent({
     th,
     td {
       padding: 0;
+      .el-textarea__inner {
+        min-height: 40px !important;
+      }
+    }
+    .el-table_1_column_6 {
+      display: flex;
+      align-items: flex-start;
+      .cell {
+        padding: 8px;
+      }
     }
   }
   .reg-title {

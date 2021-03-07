@@ -28,3 +28,29 @@ export async function deleteConfirm(name: string = "该项"): Promise<boolean> {
     return false
   }
 };
+
+export function usernameValidator(
+  _: any,
+  value: string,
+  callback: (s: string | void) => void
+) {
+  const regExp = /^\w{5,16}$/;
+  if (regExp.test(value)) {
+    return callback();
+  } else {
+    return callback("5-16个 '英文/数字/_' 组成");
+  }
+}
+
+export function passwordValidator(
+  _: any,
+  value: string,
+  callback: (s: string | void) => void
+) {
+  const regExp = /^\d{5,16}$/;
+  if (regExp.test(value)) {
+    return callback("密码不能用纯数字表示");
+  } else {
+    return callback();
+  }
+}

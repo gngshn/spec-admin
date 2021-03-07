@@ -1,6 +1,5 @@
 export interface RegField {
-  msb: number
-  lsb: number
+  bits: number[]
   name: string
   description: string
   access: string

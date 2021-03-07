@@ -15,8 +15,8 @@ export default defineComponent({
     stringMode: { type: Boolean, default: false },
   },
   setup(props, context) {
-    const getString = (value: string | number | undefined) => {
-      if (value === undefined) {
+    const getString = (value: string | number | undefined | null) => {
+      if (value === undefined || value === null) {
         return "";
       }
       if (props.stringMode) {

@@ -9,10 +9,10 @@
     <el-table border :data="register.fields.slice().reverse()">
       <el-table-column label="bits" min-width="10">
         <template #default="scope">
-          <span v-if="scope.row.msb !== scope.row.lsb">
-            {{ scope.row.msb }}:{{ scope.row.lsb }}
+          <span v-if="scope.row.bits[0] !== scope.row.bits[1]">
+            {{ scope.row.bits[1] }}:{{ scope.row.bits[0] }}
           </span>
-          <span v-else> {{ scope.row.lsb }} </span>
+          <span v-else> {{ scope.row.bits[0] }} </span>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="name" min-width="15">

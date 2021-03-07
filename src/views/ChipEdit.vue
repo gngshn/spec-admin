@@ -8,6 +8,7 @@
         label-position="right"
         label-width="6em"
         ref="formRef"
+        @submit.prevent="save"
       >
         <el-form-item label="芯片名称" prop="name">
           <el-input v-model="chip.name"></el-input>
@@ -19,8 +20,8 @@
             v-model="chip.description"
           ></el-input>
         </el-form-item>
+        <el-button type="primary" native-type="submit">保存</el-button>
       </el-form>
-      <el-button type="primary" @click="save">保存</el-button>
     </el-card>
   </div>
 </template>
@@ -48,21 +49,19 @@ export default defineComponent({
     });
     const formRef = ref<HTMLFormElement>();
     const save = async () => {
-      if (formRef.value) {
-        try {
-          await formRef.value.validate();
-        } catch {
-          return;
+      try {
+        await formRef.value?.validate();
+        let res;
+        if (props.id) {
+          res = await axios.put(`/generic/chips/${props.id}`, chip.value);
+        } else {
+          res = await axios.post("/generic/chips", chip.value);
         }
-      }
-      let res;
-      if (props.id) {
-        res = await axios.put(`/generic/chips/${props.id}`, chip.value);
-      } else {
-        res = await axios.post("/generic/chips", chip.value);
-      }
-      if (res.status === 200 || res.status === 201) {
-        router.push("/chips/list");
+        if (res.status === 200 || res.status === 201) {
+          router.push("/chips/list");
+        }
+      } catch {
+        return;
       }
     };
     const getChip = async () => {

@@ -43,9 +43,33 @@ const routes: Array<RouteRecordRaw> = [
       },
     ]
   },
+  {
+    path: '/login',
+    component: () => import('../views/Login.vue'),
+    meta: { isPublic: true }
+  },
+  {
+    path: '/change-password',
+    component: () => import('../views/PasswordChange.vue'),
+    meta: { isPublic: true }
+  }
 ]
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
 })
+
+router.beforeEach((to, from) => {
+  if (sessionStorage.token) {
+    if (to.path == '/login') {
+      return '/'
+    }
+  } else {
+    if (!to.meta.isPublic) {
+      return '/login'
+    }
+  }
+})
+
+export default router
