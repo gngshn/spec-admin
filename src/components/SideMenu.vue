@@ -35,12 +35,24 @@
         <i class="el-icon-setting"></i>
         <span>寄存器管理</span>
       </el-menu-item>
+      <el-submenu index="3" v-if="getUsername() == 'admin'">
+        <template #title>
+          <i class="el-icon-user"></i><span>用户管理</span>
+        </template>
+        <el-menu-item index="/users/list">
+          <span>用户列表</span>
+        </el-menu-item>
+        <el-menu-item index="/users/create">
+          <span>新建用户</span>
+        </el-menu-item>
+      </el-submenu>
     </el-menu>
   </el-affix>
 </template>
 
 <script lang='ts'>
 import { defineComponent, ref } from "vue";
+import { getUsername } from "../utils";
 
 export default defineComponent({
   props: {
@@ -50,6 +62,7 @@ export default defineComponent({
     const inheritAttrs = ref(false);
     return {
       inheritAttrs,
+      getUsername,
     };
   },
 });

@@ -42,15 +42,6 @@ export function usernameValidator(
   }
 }
 
-export function passwordValidator(
-  _: any,
-  value: string,
-  callback: (s: string | void) => void
-) {
-  const regExp = /^\d{5,16}$/;
-  if (regExp.test(value)) {
-    return callback("密码不能用纯数字表示");
-  } else {
-    return callback();
-  }
+export function getUsername() {
+  return sessionStorage.user ? sessionStorage.user : ""
 }

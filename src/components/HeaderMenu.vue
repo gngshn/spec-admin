@@ -7,10 +7,10 @@
         :icon="foldIconType"
         @click="foldIconClick()"
       ></el-button>
-      <div class="d-flex user-info" v-if="username !== ''">
-        <h3>{{ username }}</h3>
+      <div class="d-flex user-info" v-if="getUsername() !== ''">
+        <h3>Hello, {{ getUsername() }}</h3>
         <el-button
-          type="danger"
+          type="warning"
           icon="el-icon-switch-button"
           size="mini"
           circle
@@ -24,6 +24,7 @@
 <script lang='ts'>
 import { defineComponent, computed } from "vue";
 import { useRouter } from "vue-router";
+import { getUsername } from "../utils";
 
 export default defineComponent({
   props: {
@@ -35,9 +36,6 @@ export default defineComponent({
     const foldIconType = computed(() => {
       return props.collapse ? "el-icon-s-unfold" : "el-icon-s-fold";
     });
-    const username = computed(() => {
-      return sessionStorage.user ? sessionStorage.user : "";
-    });
     const router = useRouter();
     const logout = () => {
       sessionStorage.clear();
@@ -46,7 +44,7 @@ export default defineComponent({
     return {
       foldIconClick,
       foldIconType,
-      username,
+      getUsername,
       logout,
     };
   },

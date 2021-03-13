@@ -11,7 +11,6 @@ http.interceptors.request.use(config => {
     config.headers.Authorization = `Bearer ${sessionStorage.token}`
   }
   return config
-}, err => {
 })
 
 http.interceptors.response.use(res => {

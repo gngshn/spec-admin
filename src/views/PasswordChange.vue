@@ -60,11 +60,11 @@ export default defineComponent({
       ],
       oldPassword: [
         { required: true, message: "密码不能为空", trigger: "blur" },
+        { min: 8, max: 16, message: "长度为8-16字符", trigger: "blur" },
       ],
       newPassword: [
         { required: true, message: "密码不能为空", trigger: "blur" },
         { min: 8, max: 16, message: "长度为8-16字符", trigger: "blur" },
-        { validator: passwordValidator, trigger: "blur" },
       ],
     };
     const formRef = ref<HTMLFormElement>();

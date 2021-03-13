@@ -32,6 +32,7 @@ import { User } from "../model/user";
 import axios from "../utils/axios";
 import { useRouter } from "vue-router";
 import { passwordValidator, usernameValidator } from "../utils";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   setup() {
@@ -48,7 +49,6 @@ export default defineComponent({
       password: [
         { required: true, message: "密码不能为空", trigger: "blur" },
         { min: 8, max: 16, message: "长度为8-16字符", trigger: "blur" },
-        { validator: passwordValidator, trigger: "blur" },
       ],
     };
     const formRef = ref<HTMLFormElement>();
@@ -59,6 +59,7 @@ export default defineComponent({
         const res = await axios.post("/login", user.value);
         if (res.data.needChangePassword) {
           sessionStorage.clear();
+          ElMessage.error("请先修改密码");
           router.push("/change-password");
         } else {
           sessionStorage.user = user.value.username;

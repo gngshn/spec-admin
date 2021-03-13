@@ -57,7 +57,7 @@ export default defineComponent({
         return;
       }
       const res = await axios.get(
-        `/generic/registers?parent=${mod.value}&skip=${pagination.value.skip}&limit=${pagination.value.limit}`
+        `/generic/registers?$sort=offset&parent=${mod.value}&$skip=${pagination.value.skip}&$limit=${pagination.value.limit}`
       );
       pagination.value = res.data;
     };

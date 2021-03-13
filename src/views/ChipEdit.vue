@@ -27,6 +27,7 @@
 </template>
 
 <script lang="ts">
+import { ElMessage } from "element-plus";
 import { defineComponent, onMounted, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Chip } from "../model/chip";
@@ -58,24 +59,24 @@ export default defineComponent({
           res = await axios.post("/generic/chips", chip.value);
         }
         if (res.status === 200 || res.status === 201) {
+          ElMessage.success((props.id ? "编辑" : "创建") + "芯片成功");
           router.push("/chips/list");
         }
       } catch {
         return;
       }
     };
-    const getChip = async () => {
+    const fetchChip = async () => {
       if (props.id) {
         const res = await axios.get(`/generic/chips/${props.id}`);
         chip.value = res.data;
       }
     };
-    onMounted(getChip);
+    onMounted(fetchChip);
     return {
       chip,
       chipRules,
       save,
-      getChip,
       formRef,
     };
   },

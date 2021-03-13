@@ -1,6 +1,12 @@
 <template>
   <div class="reg-edit">
-    <el-form :model="reg" :rules="regRules" label-width="3em" ref="formRef">
+    <el-form
+      :model="reg"
+      :rules="regRules"
+      label-width="3em"
+      ref="formRef"
+      @submit.prevent
+    >
       <div class="d-flex reg-title">
         <div class="d-flex name-des flex-1">
           <el-form-item label="名称" prop="name">
@@ -103,6 +109,7 @@
               type="danger"
               icon="el-icon-delete"
               circle
+              tabindex="-1"
               @click="handleDeleteRow(reg.fields.length - 1 - scope.$index)"
             ></el-button>
           </template>
@@ -246,12 +253,13 @@ export default defineComponent({
         min-height: 40px !important;
       }
     }
-    .el-table_1_column_6 {
+    td:last-child {
       display: flex;
       align-items: flex-start;
       .cell {
-        padding: 8px;
+        padding: 6px;
       }
+      border: none;
     }
   }
   .reg-title {

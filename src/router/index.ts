@@ -41,6 +41,14 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/RegManager.vue'),
         props: true,
       },
+      {
+        path: '/users/list',
+        component: () => import('../views/UserList.vue'),
+      },
+      {
+        path: '/users/create',
+        component: () => import('../views/UserEdit.vue'),
+      },
     ]
   },
   {
@@ -60,7 +68,7 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach(to => {
   if (sessionStorage.token) {
     if (to.path == '/login') {
       return '/'

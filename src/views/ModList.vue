@@ -52,7 +52,6 @@
 </template>
 
 <script lang="ts">
-import { ElMessageBox } from "element-plus";
 import { computed, defineComponent, onMounted, Ref, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Mod } from "../model/mod";
@@ -107,7 +106,7 @@ export default defineComponent({
         parentParam = `&parent=${modFilter.value}`;
       }
       const resChildren = await axios.get(
-        `/generic/mods?skip=${skip}&limit=${pagination.value.limit}${chipParam}${parentParam}`
+        `/generic/mods?$sort=name&$skip=${skip}&$limit=${pagination.value.limit}${chipParam}${parentParam}`
       );
       pagination.value = resChildren.data;
       if (modFilter.value !== "" && modFilter.value !== null) {
@@ -122,13 +121,15 @@ export default defineComponent({
       router.push({ path: `/mods/edit/${mod.id}` });
     };
     const handleDelete = async (mod: Mod) => {
+      if (!(await deleteConfirm(mod.name))) {
+        return;
+      }
       try {
-        await deleteConfirm();
+        await axios.delete(`/generic/mods/${mod.id}`);
+        await fetchMods(pageToSkip(currentPage.value));
       } catch {
         return;
       }
-      await axios.delete(`/generic/mods/${mod.id}`);
-      await fetchMods(pageToSkip(currentPage.value));
     };
 
     return {

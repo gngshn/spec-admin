@@ -38,6 +38,7 @@
 </template>
 
 <script lang="ts">
+import { ElMessage } from "element-plus";
 import { defineComponent, onMounted, Ref, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import HexInput from "../components/HexInput.vue";
@@ -92,6 +93,7 @@ export default defineComponent({
           res = await axios.post("/generic/mods", mod.value);
         }
         if (res.status === 200 || res.status === 201) {
+          ElMessage.success((props.id ? "编辑" : "创建") + "模块成功");
           router.push("/mods/list");
         }
       } catch {
@@ -107,17 +109,10 @@ export default defineComponent({
       }
     };
     onMounted(fetchData);
-    watch(
-      () => props.id,
-      async () => {
-        fetchData();
-      }
-    );
     return {
       mod,
       modRules,
       save,
-      fetchData,
       formRef,
     };
   },

@@ -67,8 +67,8 @@ import { Register } from "../model/register";
 import RegShow from "./RegShow.vue";
 import RegForm from "./RegForm.vue";
 import axios from "../utils/axios";
-// import { ElMessage } from "element-plus";
-// import { deleteConfirm } from "../utils";
+import { ElMessage } from "element-plus";
+import { deleteConfirm } from "../utils";
 
 export default {
   components: { RegShow, RegForm },
@@ -91,21 +91,21 @@ export default {
           context.emit("update:modelValue", reg);
           isShowing.value = true;
         }
-        // ElMessage.success("保存成功");
+        ElMessage.success("保存成功");
       } catch {
-        // ElMessage.error("保存失败");
+        ElMessage.error("保存失败");
       }
     };
     const handleDelete = async (reg: Register) => {
-      // if (!(await deleteConfirm())) {
-      //   return;
-      // }
+      if (!(await deleteConfirm(reg.name))) {
+        return;
+      }
       try {
         await axios.delete(`/generic/registers/${reg.id}`);
-        // ElMessage.success({ message: "删除成功", type: "success" });
+        ElMessage.success({ message: "删除成功", type: "success" });
         context.emit("reg-change");
       } catch {
-        // ElMessage.error("删除失败");
+        ElMessage.error("删除失败");
       }
     };
     const handleAddRow = async (reg: Register) => {

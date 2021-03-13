@@ -12,7 +12,7 @@
     <div class="d-flex flex-column flex-1">
       <div class="header"><header-menu v-model:collapse="collapse" /></div>
       <div class="main flex-1">
-        <router-view />
+        <router-view :key="$route.path" />
       </div>
     </div>
   </div>
