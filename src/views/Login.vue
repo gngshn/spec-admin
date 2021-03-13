@@ -58,8 +58,7 @@ export default defineComponent({
         await formRef.value?.validate();
         const res = await axios.post("/login", user.value);
         if (res.data.needChangePassword) {
-          delete sessionStorage.user;
-          delete sessionStorage.token;
+          sessionStorage.clear();
           router.push("/change-password");
         } else {
           sessionStorage.user = user.value.username;

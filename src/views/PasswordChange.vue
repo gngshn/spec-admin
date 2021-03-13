@@ -73,8 +73,7 @@ export default defineComponent({
     const changePassword = async () => {
       try {
         await formRef.value?.validate();
-        delete sessionStorage.user;
-        delete sessionStorage.token;
+        sessionStorage.clear();
         const res = await axios.post(
           "/change-password",
           changePasswordDto.value
